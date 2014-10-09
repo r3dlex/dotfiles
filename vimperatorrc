@@ -1,0 +1,127 @@
+""---------------------------------------------------------------
+"---------------------------------------------------------------
+"MY FUCKING VIMPERATORRC FULL OF AWESOMENESS AND RAINBOW VOMITS-
+"-------------------------R3DLEX--------------------------------
+"---------------------------------------------------------------
+"---------------------------------------------------------------
+
+"===============GENERAL====================
+" Autocomplete using Firefox Awesomebar subsystem
+set complete=l
+
+" Show completions as you type? '' waits for tab, 'auto' shows them immediately
+"set wildoptions=''
+
+" Select the longest autocomplete match
+set wildmode='list:full'
+
+" Show a (n)umber on tabs, the (b)ottom scrollbar, and the (r)ight scrollbar
+set gui=tabs
+" Show number for each tab
+set tabnumbers
+
+" Always show tab bar
+"set showtabline=1
+
+" Don't beep
+set noerrorbells
+
+" Make Firefox run faster by using JIT
+set! javascript.options.jit.chrome=true
+
+" Prevents close tab command to close the browser itself
+set! browser.tabs.closeWindowWithLastTab=false
+
+"Open command search firefox history and bookmarks
+set cpt=l
+
+"Removing bell sound
+javascript liberator.beep = function() { return false; }
+" Adding visual bell
+set visualbell
+" Status bar
+set showstatuslinks=1
+" Removing title string
+set titlestring=null
+" Setting editor call to mvim
+:set editor='bash -lc "mvim -g -f \$*" mvim '
+
+"=====================MAPPINGS=====================
+" Press 'F10' to toggle Vimperator
+noremap <F10> :vimperatortoggle<CR>
+
+" By default <C-v> in vimperator means to pass next to firefox. That is, whe
+" are remmaping C-c and C-v to work like expected for firefox 
+noremap <C-c> <C-v><C-c>
+noremap <C-v> <C-v><C-v>
+
+"**Tab-related**
+" Press 'm' or <C-,> to go to previous tab
+noremap m :bprevious<CR>
+noremap <C-m> :bprevious<CR>
+" Press ',' or C-, to go to next tab
+noremap , :bnext<CR>
+noremap <C-,> :bnext<CR>
+" Press 'q' to delete current tab
+noremap q :bdelete<CR>
+"Remaps d to open a new tab with the downloads. This changes the default :bdelete behaviour of 'd'
+noremap d :tabnew<CR> | : downloads<CR>
+" Maps C-z and C-x to Back and forward
+noremap <C-z> :back<CR>
+noremap <C-x> :forward<CR>
+"Remap Ctrl+k to open. 'g' is assumed to be Google's keyword
+noremap <C-s> :open g<Space>
+inoremap <C-s> <Esc>:open g<Space>
+cnoremap <C-s> <Esc>:open g<Space>
+
+"Remapping C-a to select all
+noremap <C-a> <C-v><C-a>
+
+noremap <C-S-F> :js document.getElementById("FindToolbar").close();<CR>
+inoremap <C-S-F> <ESC>:js document.getElementById("FindToolbar").close();<CR>
+" copy page title to the clipboard (with ALT+y)
+" http://www.mozdev.org/pipermail/vimperator/2008-October/002546.html
+":map <A-y> :js util.copyToClipboard(content.document.title, true)<cr>
+
+autocmd LocationChange .*                           js modes.passAllKeys = false
+autocmd LocationChange docs\.google\.com            js modes.passAllKeys = true
+autocmd LocationChange drive\.google\.com           js modes.passAllKeys = true
+autocmd LocationChange mail\.google\.com            js modes.passAllKeys = true
+autocmd LocationChange www\.google\.com/calendar    js modes.passAllKeys = true
+autocmd LocationChange www\.google\.com/reader      js modes.passAllKeys = true
+autocmd LocationChange mail\.google\.com/tasks      js modes.passAllKeys = false
+
+" Completion engine
+set defsearch=g
+set suggestengines=g
+set complete=lbsS
+
+" Find
+"" perform incremental searching
+set incsearch
+"" highlight search results
+set hlsearch
+"" typically (see below) ignore case
+set ignorecase
+"" only consider case if an upper case char is used
+set smartcase
+"" vertical bar CANNOT be used here
+set urlseparator=;
+
+" Scrolling
+"" Vimperator does not give the user direct control over scroll distance. Vimium (for
+"" Chromium/Google Chrome) uses a nice 60px by default; 2<dir> is much smaller, but it
+"" feels better in Vimperator.
+nnoremap j 2j
+nnoremap k 2k
+nnoremap h 2h
+nnoremap l 2l
+
+" Mapping C-j and C-k to arrows
+noremap <C-j> <C-v><Down>
+inoremap <C-j> <C-v><Down>
+noremap <C-k> <Up>
+inoremap <C-k> <Up>
+
+" Changing links hint
+:highlight Hint font-size:96%;color:white;background-color:red;padding:2px;
