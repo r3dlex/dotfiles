@@ -1,0 +1,12 @@
+#~/.bashrc
+#Part of bashrc to define user aliases
+
+#Wine functions
+
+function preview {
+  open -a preview "$@"
+}
+
+function firefox {
+  open -a firefox
+}
