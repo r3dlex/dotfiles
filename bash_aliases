@@ -26,3 +26,8 @@ function wine_build {
 function wine_msys {
   WINEPREFIX=${WINE_BUILD_PREFIX} wineconsole "C:\MinGW\msys\1.0\msys.bat"
 }
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Adding ${HOME}/.bash_aliases_osx";
+  . ${HOME}/.bash_aliases_osx;
+fi
