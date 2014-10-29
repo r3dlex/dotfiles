@@ -46,6 +46,7 @@ NeoBundle 'hewes/unite-gtags'
 NeoBundle 'vim-scripts/a.vim'
 NeoBundle 'scrooloose/nerdcommenter' 
 NeoBundle 'wting/rust.vim'
+NeoBundle 'FelikZ/ctrlp-py-matcher'
 call neobundle#end()
 
 "Required by neobundle
@@ -197,16 +198,62 @@ autocmd FileType c,cpp,objc vnoremap <buffer><C-h> :ClangFormat<CR>
 
 "Ctrlp rebindding to Ctrl-p
 let g:ctrlp_map = '<C-p>'
-let g:ctrlp_cmd = 'CtrlP'
-map <C-S-p> :CtrlPMixed<CR>
-let g:ctrlp_max_files=0
-let g:ctrlp_max_depth=32
-" Ignore some folders and binary files
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn|metadata|build*)$',
-  \ 'file': '\v\.(exe|so|dll|bin|o|a|png|jpeg|jpg|pdf|class)$',
-  \ }
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
 
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+        \ --ignore .git
+        \ --ignore .svn
+        \ --ignore .hg
+        \ --ignore .settings
+        \ --ignore .project
+        \ --ignore .cproject
+        \ --ignore .DS_Store
+        \ --ignore "**/*.pyc"
+        \ --ignore "**/*.exe"
+        \ --ignore "**/*.pdf"
+        \ --ignore "**/*.so"
+        \ --ignore "**/*.png"
+        \ --ignore "**/*.jpeg"
+        \ --ignore "**/*.dll"
+        \ --ignore "**/*.lib"
+        \ --ignore "**/*.o"
+        \ --ignore "**/*.a"
+        \ --ignore "**/*.dex"
+        \ --ignore "**/*.class"
+        \ --ignore "**/*.bin"
+        \ --ignore "**/*.db"
+        \ --ignore "**/*.bmp"
+        \ --ignore "**/*.apk"
+        \ --ignore "**/*.zip"
+        \ --ignore "**/*.tar"
+        \ --ignore "**/*.tar.bz"
+        \ --ignore "**/*.tar.bz2"
+        \ --ignore "**/*.tar.gz"
+        \ --ignore "**/*.tar.xz"
+        \ --ignore "**/*.tar.lzma"
+        \ --ignore "**/*.rar"
+        \ --ignore "**/*.db"
+        \ --ignore "**/*.d"
+        \ -g ""'
+else 
+  "Fallback options when The Silver Searcher is not available
+  let g:ctrlp_cmd = 'CtrlP'
+  map <C-S-p> :CtrlPMixed<CR>
+  let g:ctrlp_max_files=0
+  let g:ctrlp_max_depth=32
+  " Ignore some folders and binary files
+  let g:ctrlp_custom_ignore = {
+        \ 'dir':  '\v[\/]\.(git|hg|svn|metadata|build*)$',
+        \ 'file': '\v\.(exe|so|dll|bin|o|a|png|jpeg|jpg|pdf|class)$',
+        \ }
+endif
+
+
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 " Clang complete 
 let g:clang_library_path = '/Users/afb/.vim/bundle/YouCompleteMe/third_party/ycmd'
 let g:clang_use_library=1
