@@ -1,0 +1,330 @@
+#% Do not delete the line below; configure depends on this
+#  \DeclareLaTeXClass{article (exam)}
+
+Format 11
+
+# General textclass parameters
+Columns			1
+Sides			1
+PageStyle		Headers
+MaxCounter		Counter_Section
+
+# Default textclass options. The user may need to modify this.
+#ClassOptions
+#  Other			"aps, manuscript"
+#End
+
+# Standard style definition
+Style Standard
+  Margin  		Static
+  LatexType 		Paragraph
+  LatexName 		dummy
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+############### Sections.
+Input stdsections.inc
+
+
+Style Question
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		question
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style Answer
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		answer
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style Choice
+  Margin  		Static
+  LatexType 		Command
+  LatexName 		choice
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+
+Style ShortAnswer
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		shortanswer
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		Counter_Section
+End
+
+Style FillIn
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		fillin
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		Counter_Section
+End
+
+Style TrueFalse
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		truefalse
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		Counter_Section
+End
+
+Style MultipleChoice
+  Margin  		Static
+  LatexType 		Environment
+  LatexName		multiplechoice
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		Counter_Section
+End
+
+Style Fixed
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		fixed
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		Counter_Section
+End
+
+Style Block
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		block
+  ParIndent		MM
+  ParSkip		1
+  KeepEmpty		1
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Input stdstarsections.inc
+
+# remove the layouts that do not make sense.
+NoStyle         Chapter
+NoStyle         Chapter*
+NoStyle		Subparagraph
+NoStyle		Subparagraph*
+
+
+########### LAYOUTS quotes, etc.
+Input stdlayouts.inc
+
+########## LISTS
+Input stdlists.inc
+
+################ STRUCTURE OF THE DOCUMENT
+Input stdstruct.inc
+
+
+Style Cover
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		frontmatter
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+
+Style Endpage
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		endmatter
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+
+Style ExamTop
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		examtop
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style KeyTop
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		keytop
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style ExamPreface
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		exampreface
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style KeyPreface
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		keypreface
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style ExamClosing
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		examclosing
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+Style KeyClosing
+  Margin  		Static
+  LatexType 		Environment
+  LatexName 		keyclosing
+  ParIndent		MM
+  ParSkip 		0.4
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+End
+
+
+
+# Address style definition
+Style Address
+  Margin		Dynamic
+  LatexType		Command
+  InTitle		1
+  LatexName		address
+  ParSkip		0.4
+#  BottomSep		1.5
+#  ParSep		1.5
+  Align			Center
+  AlignPossible		Block, Left, Right, Center
+  LabelType		Static
+  LabelString           "Address: "
+
+  LabelFont
+    Shape		Italic
+  EndFont
+End  
+
+
+# Date style definition
+Style Date
+  LabelType		Static
+  LabelString		"Date: "
+
+  # standard font definition
+  LabelFont
+    Shape		Italic
+    Size		Large
+  EndFont
+End
+
+Style Class
+  CopyStyle             Address
+  LatexName		affiliation
+  LabelString           "Class: "
+End
+
+Style Thanks
+  CopyStyle             Address
+  LatexName		thanks
+  LabelString           "Thanks: "
+End
+
+Style Author_Email
+  CopyStyle             Address
+  LatexName             email
+  LabelString           "Electronic Address: "
+
+  TextFont
+    Family              Typewriter
+  EndFont
+  LabelFont
+# override Typewriter
+    Family              Roman
+  EndFont
+End
+
+Style Author_URL
+  CopyStyle             "Author Email"
+  LatexName             homepage
+  LabelString           "URL: "
+End
+
+# Abstract style definition
+Style Abstract 
+  InTitle		1
+  ItemSep		0.2
+  ParSep		0.3
+
+  LabelFont
+    Size		Large
+  EndFont
+End 
+
+Style Keywords
+  CopyStyle             PACS
+  Latexname             keywords
+  LabelString           "Keywords: "
+End
+
