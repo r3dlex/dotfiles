@@ -89,6 +89,9 @@ autocmd LocationChange drive\.google\.com           js modes.passAllKeys = true
 autocmd LocationChange mail\.google\.com            js modes.passAllKeys = true
 autocmd LocationChange www\.google\.com/calendar    js modes.passAllKeys = true
 autocmd LocationChange www\.google\.com/reader      js modes.passAllKeys = true
+autocmd LocationChange www\.facebook\.com/          js modes.passAllKeys = true
+autocmd LocationChange https://www\.waze\.com/      js modes.passAllKeys = true
+autocmd LocationChange fb\.me/                      js modes.passAllKeys = true
 autocmd LocationChange mail\.google\.com/tasks      js modes.passAllKeys = false
 
 " Completion engine
