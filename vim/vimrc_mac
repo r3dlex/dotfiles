@@ -5,85 +5,42 @@
 "------------------------------------------------------------
 "------------------------------------------------------------
 
-" Fetch NeoBundle if not available
-let neoBundleReadMe=expand('~/.vim/bundle/neobundle.vim/README.md')
-if !filereadable(neoBundleReadMe)
-echo "Installing NeoBundle...\n"
-silent !mkdir -p ~/.vim/bundle
-silent !git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
-endif
-
 if has('vim_starting')
   set nocompatible               " Be iMproved
-  "Required
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
 "Required
-call neobundle#begin(expand('~/.vim/bundle/'))
+call plug#begin(expand('~/.vim/plugged'))
 
-" Let NeoBundle manage NeoBundle
-"Required
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'Lokaltog/vim-easymotion'
-NeoBundle 'Valloric/YouCompleteMe',
-      \ {
-      \   'build': {
-      \     'unix' : './install.sh --clang-completer',
-      \     'mac'  : './install.sh --clang-completer'
-      \   }
-      \ }
+Plug 'tpope/vim-fugitive'
+Plug 'junegunn/seoul256.vim'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 " non-GitHub repos
-"NeoBundle 'kien/ctrlp.vim' 
-NeoBundle 'rhysd/vim-clang-format'
-NeoBundle 'Shougo/neomru.vim'
-let vimproc_updcmd = has('win64') ?
-      \ 'tools\\update-dll-mingw 64' : 'tools\\update-dll-mingw 32'
-execute "NeoBundle 'Shougo/vimproc.vim'," . string({
-      \ 'build' : {
-      \     'windows' : vimproc_updcmd,
-      \     'cygwin' : 'make -f make_cygwin.mak',
-      \     'mac' : 'make -f make_mac.mak',
-      \     'unix' : 'make -f make_unix.mak',
-      \    },
-      \ })
-NeoBundle 'vim-scripts/a.vim'
-NeoBundle 'scrooloose/nerdcommenter' 
-NeoBundle 'wting/rust.vim'
+Plug 'rhysd/vim-clang-format'
+Plug 'vim-scripts/a.vim'
+Plug 'scrooloose/nerdcommenter' 
+Plug 'wting/rust.vim'
 "'ggreer/the_silver_searcher' for checking instructions on how to install ag
-NeoBundle 'Raimondi/delimitMate'
-NeoBundle 'zhaocai/GoldenView.vim'
-NeoBundle 'godlygeek/csapprox'
-NeoBundle 'marijnh/tern_for_vim'
-NeoBundle 'junegunn/fzf.vim'
-NeoBundle 'dbakker/vim-projectroot'
-call neobundle#end()
+Plug 'Raimondi/delimitMate'
+Plug 'zhaocai/GoldenView.vim'
+Plug 'marijnh/tern_for_vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf.vim'
+Plug 'dbakker/vim-projectroot'
+
+call plug#end()
 
 "Required by neobundle
 filetype plugin indent on
 
 syntax enable
 set background=dark
-colorscheme desert
+colo seoul256
 
 set rtp+=~/.fzf
 
-"Checking terminal
-if &term =~ "xterm"
-  " 256 colors
-  let &t_Co = 256
-  " restore screen after quitting
-  let &t_ti = "\<Esc>7\<Esc>[r\<Esc>[?47h"
-  let &t_te = "\<Esc>[?47l\<Esc>8"
-  if has("terminfo")
-    let &t_Sf = "\<Esc>[3%p1%dm"
-    let &t_Sb = "\<Esc>[4%p1%dm"
-  else
-    let &t_Sf = "\<Esc>[3%dm"
-    let &t_Sb = "\<Esc>[4%dm"
-  endif
-endif
 
 "Sets font size
 if has("gui_running")
@@ -133,7 +90,7 @@ filetype indent on
 
 autocmd FocusGained * let @z=@+
 "Changes current directory automatically, excluding /tmp
-autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
+autocmd BufEnter * silent! lcd %:p:h
 
 set laststatus=2
 set tags=tags;/
@@ -202,7 +159,6 @@ map <C-W> :bdelete<CR>
 "Alternates .h to or from .cpp/.c
 map <silent> <C-Tab> :A<CR>
 
-"set clipboard+=unnamed
 " CTRL-X and SHIFT-Del are Cut
 vnoremap <C-X> "+x
 vnoremap <S-Del> "+x
@@ -216,9 +172,12 @@ vmap <C-V> "+gP
 vmap <S-Insert>  	"+gP
 nmap <C-V> "+gP
 nmap <S-Insert>  	"+gP
-
 cmap <C-V>  	<C-R>*
 cmap <S-Insert> 	<C-R>*
+
+"Mapping set paste / set nopaste
+nnoremap <silent> <Leader>sp :set paste<CR>
+nnoremap <silent> <Leader>snp :set nopaste<CR>
 
 " Use CTRL-Q to do what CTRL-V used to do
 noremap <C-Q>   	<C-V>
@@ -244,15 +203,9 @@ autocmd FileType c,cpp,objc nnoremap <buffer><C-h> :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><C-h> :ClangFormat<CR>
 
 "Fzf searcher
-map <silent> <Leader>p     :ProjectRootExe Files<CR>
-imap <silent> <C-P>        :ProjectRootExe Files<CR>
-smap <silent> <C-P>        :ProjectRootExe Files<CR>
-map <silent> <C-P>         :ProjectRootExe Files<CR>
-nmap <silent> <leader>h    :ProjectRootExe History<CR>
-nnoremap <silent> <Leader>m :call fzf#run({
-      \   'source': 'sed "1d" $HOME/.cache/neomru/file',
-      \   'sink': 'e '
-      \ })<CR>
+nnoremap <silent> <Leader>p    :ProjectRootExe Files<CR>
+nnoremap <silent> <C-P>        :ProjectRootExe Files<CR>
+nnoremap <silent> <leader>h    :ProjectRootExe History<CR>
 
 "vim-projectroot automatic definition on buffer opening
 function! <SID>AutoProjectRootCD()
@@ -264,8 +217,12 @@ function! <SID>AutoProjectRootCD()
     " Silently ignore invalid buffers
   endtry
 endfunction
+"autocmd BufEnter * call <SID>AutoProjectRootCD()
 
-autocmd BufEnter * call <SID>AutoProjectRootCD()
+" :e PathToProject
+nnoremap <expr> <Leader>ep ':edit '.projectroot#guess().'/'
+" Update project root 
+nnoremap <leader>dp :ProjectRootCD<cr>
 
 " Clang complete 
 let g:clang_library_path = '/Users/afb/.vim/bundle/YouCompleteMe/third_party/ycmd'
@@ -276,7 +233,6 @@ let g:clang_user_options = "-std=c++11"
 "Snip mate triggerring mapped to <C-J> instead of <Tab>
 imap <C-J> <Plug>snipMateNextOrTrigger
 smap <C-J> <Plug>snipMateNextOrTrigger
-
 
 let g:goldenview__enable_default_mapping = 0
 " 1. split to tiled windows
@@ -293,8 +249,8 @@ nmap <silent> <Leader>n  <Plug>GoldenViewNext
 nmap <silent> <Leader>m  <Plug>GoldenViewNext
 
 "Source edition
-map <leader>ev :e ~/.vimrc<CR>
-map <leader>sv :so ~/.vimrc<CR>
+nnoremap <leader>ev :e ~/.vimrc<CR>
+nnoremap <leader>sv :so ~/.vimrc<CR>
 
 " Complete options (disable preview scratch window, longest removed to always
 " show menu)
@@ -314,6 +270,3 @@ au BufNewFile,BufRead .vimrc,.vimperatorrc set filetype=vim
 
 "Vim 7.3 detects example.pc as filetype 'proc' but has no syntax highlighting for Pro C. Override it so that it highlights as C. 
 au BufRead,BufNewFile *.pc set filetype=c
-
-"Checks if current plugins are up-to-date
-NeoBundleCheck
