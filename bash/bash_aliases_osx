@@ -10,3 +10,4 @@ function preview {
 function firefox {
   open -a firefox
 }
+

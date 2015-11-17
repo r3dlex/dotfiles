@@ -4,9 +4,12 @@
 
 #User defined aliases
 alias pmake="make -j 6"
-alias ssh_cc="ssh -Y $CERTI_REMOTE_CC_IP -p2245"
+alias ssh_cc="ssh -Y -X $CERTI_REMOTE_CC_IP -p2245"
+alias ssh_cc2="ssh -Y -X $CERTI_REMOTE_CC2_IP -p2245"
+alias ssh_cc3="ssh -Y -X $CERTI_REMOTE_CC3_IP -p2245"
 alias ssh_tvqemu="ssh root@192.168.122.10"
 alias mount_remote_fs="sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC_IP}:/home/likewise-open/CERTI/afb/Projects ${CERTI_PROJECT_PATH}"
+alias mount_remote_fs_cc3="sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC3_IP}:/home/afb/Projects ${HOME}/ProjectsRemoteCc3"
 alias so="source ${HOME}/.bash_profile"
 alias cmake_clang="CXX=clang++ CC=clang cmake"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
@@ -15,6 +18,9 @@ alias maketags_cpp='GTAGSFORCECPP=1 $(maketags)'
 alias gcc_cmake="CXX=g++-4.9 CC=gcc-4.9 cmake -G Ninja .."
 alias gcc_ccmake="CXX=g++-4.9 CC=gcc-4.9 ccmake -G Ninja .."
 alias android-cmake='cmake -DCMAKE_TOOLCHAIN_FILE=$ANDTOOLCHAIN'
+alias bcaster='rdesktop -u bcaster -d ccd-5820 -p bcaster753 -g 1024x768 ccd-5820.certi.org&'
+alias sfu='rdesktop -u instrument -d rs_sfu -p instrument -g 1024x768 rs_sfu.certi.org&'
+alias penteadera='rdesktop ccd-7240.certi.org -u dektec -p dektec753 -g 1024x768 -T Penteadera&'
 #function mount_remote_fs {
   #sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC_IP}:/home/likewise-open/CERTI/afb/Projects ${CERTI_PROJECT_PATH}
 #}
@@ -31,3 +37,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Adding ${HOME}/.bash_aliases_osx";
   . ${HOME}/.bash_aliases_osx;
 fi
+
+#For rolling back a number of predefined times
+function up { 
+  [ $(( $1 + 0 )) -gt 0 ] && cd $(eval "printf '../'%.0s {1..$1}"); 
+}
