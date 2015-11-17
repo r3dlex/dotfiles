@@ -1,5 +1,9 @@
 #User defined vars
 export CERTI_REMOTE_CC_IP="177.71.114.147"
+export CERTI_REMOTE_CC2_IP="177.71.114.147"
+export CERTI_REMOTE_CC3_IP="177.71.114.148"
+export REMOTE_IP_LLF="150.162.165.73"
+export REMOTE_IP_EPT="150.162.164.154"
 export CERTI_PROJECT_PATH="${HOME}/Projects"
 export CERTI_NCL_CONNECTION_IMPL=thrift
 export NDK="${HOME}/android-ndk-r8b"
@@ -12,13 +16,17 @@ export ANDTOOLCHAIN="${ANDROID_CMAKE}/toolchain/android.toolchain.cmake"
 #Magical Mac stuff
 export JAVA_HOME="$(/usr/libexec/java_home)"
 #Brew Token
-export HOMEBREW_GITHUB_API_TOKEN="c86f4ecc9424cef464fe3d96c37f22bb6b1b5608"
+export HOMEBREW_GITHUB_API_TOKEN="f80e99d5e0d0fcd52f163d0f14480df9db05d977"
 export EDITOR="vim"
 export VTK_DIR=/usr/local/Cellar/vtk/5.10.1
 #User defined paths
-export LD_LIBRARY_PATH="${HOME}/Binaries/lib:${LD_LIBRARY_PATH}:${ANDROID_HOME}/tools/lib:${LD_LIBRARY_PATH}"
-export PATH="/usr/local/bin:/usr/local/sbin:${HOME}/Binaries/bin:${HOME}/Binaries:$PATH:/usr/local/include:/usr/local/lib:/usr/local/lib64:/usr/local/bin:${NDK}:${ANDROID_SDK}/platform-tools:${ANDROID_HOME}/tools"
+export LD_LIBRARY_PATH="${HOME}/Binaries/lib:${HOME}/Local:${LD_LIBRARY_PATH}:${ANDROID_HOME}/tools/lib:${LD_LIBRARY_PATH}"
+export PATH="/usr/local/bin:/usr/local/sbin:${HOME}/Binaries/bin:${HOME}/Binaries:$PATH:/usr/local/include:/usr/local/lib:/usr/local/lib64:/usr/local/bin:${NDK}:${ANDROID_SDK}/platform-tools:${ANDROID_HOME}/tools:${HOME}/.local/bin:${HOME}/Toolchains/stm32/gcc-arm-none-eabi-4_9-2014q4/bin"
 export CERTI_IMG_FSPATH="/remotefs"
 export MAKEOBJDIRPREFIX=$HOME/wa/globaltags
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export WINE_BUILD_PREFIX=${HOME}/Workspace/WineBuild
+export NVIM_TUI_ENABLE_TRUE_COLOR=1
+export FZF_DEFAULT_COMMAND='ag -l -g ""'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_TMUX_HEIGHT="30%"
