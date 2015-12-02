@@ -1,10 +1,5 @@
 #User defined vars
-export CERTI_REMOTE_CC_IP="177.71.114.147"
-export CERTI_REMOTE_CC2_IP="177.71.114.147"
-export CERTI_REMOTE_CC3_IP="177.71.114.148"
-export REMOTE_IP_LLF="150.162.165.73"
-export REMOTE_IP_EPT="150.162.164.154"
-export CERTI_PROJECT_PATH="${HOME}/Projects"
+export CERTI_PROJECT_PATH="${HOME}/ProjectsRemote"
 export CERTI_NCL_CONNECTION_IMPL=thrift
 export NDK="${HOME}/android-ndk-r8b"
 export ANDROID_NDK="${NDK}"
@@ -14,7 +9,7 @@ export HOSTALIASES="${HOME}/.hosts"
 export ANDROID_CMAKE="${HOME}/Workspace/Android/android-cmake"
 export ANDTOOLCHAIN="${ANDROID_CMAKE}/toolchain/android.toolchain.cmake"
 #Magical Mac stuff
-export JAVA_HOME="$(/usr/libexec/java_home)"
+export JAVA_HOME="/usr/lib/jvm/default-java"
 #Brew Token
 export HOMEBREW_GITHUB_API_TOKEN="f80e99d5e0d0fcd52f163d0f14480df9db05d977"
 export EDITOR="vim"
@@ -25,6 +20,9 @@ export PATH="/usr/local/bin:/usr/local/sbin:${HOME}/Binaries/bin:${HOME}/Binarie
 export CERTI_IMG_FSPATH="/remotefs"
 export MAKEOBJDIRPREFIX=$HOME/wa/globaltags
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+export PATH=$PATH:${HOME}/Android/Sdk/platform-tools:${HOME}/Android/Sdk/tools
+export HOSTALIASES="${HOME}/.hosts"
+
 export WINE_BUILD_PREFIX=${HOME}/Workspace/WineBuild
 export NVIM_TUI_ENABLE_TRUE_COLOR=1
 export FZF_DEFAULT_COMMAND='ag -l -g ""'

@@ -1,15 +1,18 @@
 #~/.bashrc
 #Part of bashrc to define user aliases
 
-
 #User defined aliases
 alias pmake="make -j 6"
-alias ssh_cc="ssh -Y -X $CERTI_REMOTE_CC_IP -p2245"
-alias ssh_cc2="ssh -Y -X $CERTI_REMOTE_CC2_IP -p2245"
-alias ssh_cc3="ssh -Y -X $CERTI_REMOTE_CC3_IP -p2245"
+
+#SSH Aliases
+alias ssh_cc1="ssh -Y -X certi-cc1 -p2245"
+alias ssh_cc2="ssh -Y -X certi-cc2 -p2245"
+alias ssh_cc3="ssh -Y -X certi-cc3 -p2245"
 alias ssh_tvqemu="ssh root@192.168.122.10"
-alias mount_remote_fs="sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC_IP}:/home/likewise-open/CERTI/afb/Projects ${CERTI_PROJECT_PATH}"
-alias mount_remote_fs_cc3="sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC3_IP}:/home/afb/Projects ${HOME}/ProjectsRemoteCc3"
+
+alias mount_remote_fs_cc1="sshfs -p 2245 CERTI`echo '\\\\'`afb@certi-cc1:/home/likewise-open/CERTI/afb/ProjectsRemoteCc1 ${HOME}"
+alias mount_remote_fs_cc2="sshfs -p 2245 CERTI`echo '\\\\'`afb@certi-cc2:/home/likewise-open/CERTI/afb/Projects ${HOME}/ProjectsRemoteCc2"
+alias mount_remote_fs_cc3="sshfs -p 2245 CERTI`echo '\\\\'`afb@certi-cc3:/home/afb/Projects ${HOME}/ProjectsRemoteCc3"
 alias so="source ${HOME}/.bash_profile"
 alias cmake_clang="CXX=clang++ CC=clang cmake"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
@@ -21,9 +24,6 @@ alias android-cmake='cmake -DCMAKE_TOOLCHAIN_FILE=$ANDTOOLCHAIN'
 alias bcaster='rdesktop -u bcaster -d ccd-5820 -p bcaster753 -g 1024x768 ccd-5820.certi.org&'
 alias sfu='rdesktop -u instrument -d rs_sfu -p instrument -g 1024x768 rs_sfu.certi.org&'
 alias penteadera='rdesktop ccd-7240.certi.org -u dektec -p dektec753 -g 1024x768 -T Penteadera&'
-#function mount_remote_fs {
-  #sshfs -p 2245 CERTI`echo '\\\\'`afb@${CERTI_REMOTE_CC_IP}:/home/likewise-open/CERTI/afb/Projects ${CERTI_PROJECT_PATH}
-#}
 
 #Wine functions
 function wine_build {
@@ -39,6 +39,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 #For rolling back a number of predefined times
+
+function print_date {
+`date +%Y-%m-%d`
+}
+
+function print_date_underline {
+`echo date +%Y_%m_%d`
+}
+
 function up { 
-  [ $(( $1 + 0 )) -gt 0 ] && cd $(eval "printf '../'%.0s {1..$1}"); 
+  echo [ $(( $1 + 0 )) -gt 0 ] && cd $(eval "printf '../'%.0s {1..$1}"); 
 }
