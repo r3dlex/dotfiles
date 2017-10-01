@@ -5,89 +5,34 @@
 "------------------------------------------------------------
 "------------------------------------------------------------
 
-" Fetch NeoBundle if not available
-let neoBundleReadMe=expand('~/.vim/bundle/neobundle.vim/README.md')
-if !filereadable(neoBundleReadMe)
-echo "Installing NeoBundle...\n"
-silent !mkdir -p ~/.vim/bundle
-silent !git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
-endif
-
 if has('vim_starting')
   set nocompatible               " Be iMproved
-  "Required
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
 "Required
-call neobundle#begin(expand('~/.vim/bundle/'))
+call plug#begin(expand('~/.vim/plugged'))
 
-" Let NeoBundle manage NeoBundle
-"Required
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'Lokaltog/vim-easymotion'
-NeoBundle 'Valloric/YouCompleteMe',
-      \ {
-      \   'build': {
-      \     'unix' : './install.sh --clang-completer',
-      \     'mac'  : './install.sh --clang-completer'
-      \   }
-      \ }
+Plug 'tpope/vim-fugitive'
+Plug 'junegunn/seoul256.vim'
+Plug 'Lokaltog/vim-easymotion'
 " non-GitHub repos
-"NeoBundle 'git://git.wincent.com/command-t.git'
-NeoBundle 'kien/ctrlp.vim' 
-NeoBundle 'rhysd/vim-clang-format'
-let vimproc_updcmd = has('win64') ?
-      \ 'tools\\update-dll-mingw 64' : 'tools\\update-dll-mingw 32'
-execute "NeoBundle 'Shougo/vimproc.vim'," . string({
-      \ 'build' : {
-      \     'windows' : vimproc_updcmd,
-      \     'cygwin' : 'make -f make_cygwin.mak',
-      \     'mac' : 'make -f make_mac.mak',
-      \     'unix' : 'make -f make_unix.mak',
-      \    },
-      \ })
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'vim-scripts/a.vim'
-NeoBundle 'scrooloose/nerdcommenter' 
-NeoBundle 'FelikZ/ctrlp-py-matcher'
-" For 256 color terms
-NeoBundle 'godlygeek/csapprox'
-NeoBundle 'Raimondi/delimitMate'
-"Always have a nice view for vim split windows"
-NeoBundle 'zhaocai/GoldenView.Vim' 
-call neobundle#end()
+Plug 'rhysd/vim-clang-format'
+Plug 'vim-scripts/a.vim'
+Plug 'scrooloose/nerdcommenter' 
+"'ggreer/the_silver_searcher' for checking instructions on how to install ag
+Plug 'Raimondi/delimitMate'
+Plug 'zhaocai/GoldenView.vim'
+  Plug 'marijnh/tern_for_vim'
+ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+ Plug 'junegunn/fzf.vim'
+ Plug 'dbakker/vim-projectroot'
 
-"Required by neobundle
-filetype plugin indent on
-syntax enable
-
-"Checking terminal
-if &term =~ "xterm"
-  " 256 colors
-  let &t_Co = 256
-  " restore screen after quitting
-  let &t_ti = "\<Esc>7\<Esc>[r\<Esc>[?47h"
-  let &t_te = "\<Esc>[?47l\<Esc>8"
-  if has("terminfo")
-    let &t_Sf = "\<Esc>[3%p1%dm"
-    let &t_Sb = "\<Esc>[4%p1%dm"
-  else
-    let &t_Sf = "\<Esc>[3%dm"
-    let &t_Sb = "\<Esc>[4%dm"
-  endif
-endif
-
-"Set theme and bg
-set background=dark
-colorscheme desert
+call plug#end()
 
 "Sets font size
 if has("gui_running")
   if has("gui_gtk2")
-    set guifont=Inconsolata\ 8 
+    set guifont=Inconsolata\ 12
   elseif has("gui_macvim")
     set guifont=Menlo\ Regular:h14
   elseif has("gui_win32")
@@ -95,10 +40,40 @@ if has("gui_running")
   endif
 endif
 
+"Required by neobundle
+filetype plugin indent on
+
+syntax enable
+set background=dark
+colo seoul256
+
 "autocomplete
+" Turn on the WiLd menu
 set wildmenu
 
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+
+" Ignore case when searching
+set ignorecase
+" When searching try to be smart about cases 
+set smartcase
+" Highlight search results
+set hlsearch
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
+
+"last commands
 set showcmd
+
 " word-wrapping
 " prevents vim from inserting a line break
 set textwidth=0
@@ -119,42 +94,56 @@ set ruler
 set number
 set nu
 set nocompatible
+
+" Backup
 set nobackup
-"Ignore case and infer case
-set ignorecase
-set infercase
+set nowb
+set noswapfile
 
 if has('mouse')
     set mouse=a
 endif
 
+filetype plugin on
+filetype indent on
+
 autocmd FocusGained * let @z=@+
+
 "Changes current directory automatically, excluding /tmp
-autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
+autocmd BufEnter silent! * lcd %:p:h
+
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 set laststatus=2
 set tags=tags;/
 
 "Clang-format configs for Google C++ style, which is the default
+let g:clang_format#code_style = "google"
 let g:clang_format#style_options = {
-  \ "BasedOnStyle" : "Google",
-  \ "AlwaysBreakTemplateDeclarations" : "true",
-  \ "AccessModifierOffset" : -1,
-  \ "AllowShortIfStatementsOnASingleLine" : "false",
+  \ "AllowShortBlocksOnASingleLine" : "false",
   \ "AllowShortLoopsOnASingleLine" : "false",
+  \ "AllowShortIfStatementsOnASingleLine" :  "false",
   \ "AllowShortFunctionsOnASingleLine" : "false",
-  \ "ColumnLimit" : "80",
+  \ "AccessModifierOffset" : -1,
+  \ "AlwaysBreakTemplateDeclarations" : "true",
   \ "Standard" : "C++03"}
 "clang-format call
 let g:clang_format#command = "clang-format"
 
 "------------------------------------------------------------
-" Mappings {{{1
+" Mappings 
+"
+" Useful mappings
+
+"------------------------------------------------------------
+" Mappings
 "
 " Fixing
 set timeout ttimeout         " enable separate mapping and keycode timeouts
 set timeoutlen=250           " mapping timeout 250ms  (adjust for preference)
 set ttimeoutlen=20           " keycode timeout 20ms
+
 " Useful mappings
 
 "Maps the leader command for general usage. This one is useful for it is close
@@ -165,13 +154,6 @@ let mapleader = ';'
 "C-t is usually mapped to tag stack but since it is unused... 
 nmap <Leader>t <plug>NERDCommenterToggle
 vmap <Leader>t <plug>NERDCommenterToggle
-
-" command-t
-" double percentage sign in command mode is expanded
-" to directory of current file - http://vimcasts.org/e/14
-"cnoremap %% <C-R>=expand('%:h').'/'<cr>
-"nnoremap <silent> <Leader>bt :CommandT<CR>
-"nnoremap <silent> <Leader>bl :CommandTBuffer<CR>
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -191,7 +173,6 @@ map <C-W> :bdelete<CR>
 "Alternates .h to or from .cpp/.c
 map <silent> <C-Tab> :A<CR>
 
-"set clipboard+=unnamed
 " CTRL-X and SHIFT-Del are Cut
 vnoremap <C-X> "+x
 vnoremap <S-Del> "+x
@@ -201,13 +182,16 @@ vnoremap <C-C> "+y
 vnoremap <C-Insert> "+y
 
 " CTRL-V and SHIFT-Insert are Paste
-imap <C-V> :set paste<CR> | "+gP | :set nopaste<CR>
+vmap <C-V> "+gP
+vmap <S-Insert>  	"+gP
+nmap <C-V> "+gP
+nmap <S-Insert>  	"+gP
+cmap <C-V>  	<C-R>*
+cmap <S-Insert> 	<C-R>*
 
-"Mapping delimitMate
-imap <Leader>l <Plug>delimitMateS-Tab
-
-"cmap <C-V>  	<C-R>*
-"cmap <S-Insert> 	<C-R>*
+"Mapping set paste / set nopaste
+nnoremap <silent> <Leader>sp :set paste<CR>
+nnoremap <silent> <Leader>snp :set nopaste<CR>
 
 " Use CTRL-Q to do what CTRL-V used to do
 noremap <C-Q>   	<C-V>
@@ -228,144 +212,69 @@ let g:EasyMotion_smartcase = 1
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
-" Clang formatting options for C++,C,Objective-C code
-" map to <Leader>cf 
-autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
-"  Toggle auto formatting:
-nmap <Leader>C :ClangFormatAutoToggle<CR>
+" Ctrl+i for clang-format indentation 
+autocmd FileType c,cpp,objc nnoremap <buffer><C-h> :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><C-h> :ClangFormat<CR>
+
+"Fzf searcher
+nnoremap <silent> <Leader>p    :ProjectRootExe Files<CR>
+nnoremap <silent> <C-P>        :ProjectRootExe Files<CR>
+nnoremap <silent> <leader>h    :ProjectRootExe History<CR>
+
+"vim-projectroot automatic definition on buffer opening
+function! <SID>AutoProjectRootCD()
+  try
+    if &ft != 'help'
+      ProjectRootCD
+    endif
+  catch
+    " Silently ignore invalid buffers
+  endtry
+endfunction
+"autocmd BufEnter * call <SID>AutoProjectRootCD()
+
+" :e PathToProject
+nnoremap <expr> <Leader>ep ':edit '.projectroot#guess().'/'
+" Update project root 
+nnoremap <leader>dp :ProjectRootCD<cr>
+
+" Clang complete 
+" let g:clang_library_path = '/Users/afb/.vim/bundle/YouCompleteMe/third_party/ycmd'
+" let g:clang_use_library=1
+" let g:clang_user_options = "-std=c++11"
+"nnoremap <Leader>q :call g:ClangUpdateQuickFix()<CR>
+
+"Snip mate triggerring mapped to <C-J> instead of <Tab>
+imap <C-J> <Plug>snipMateNextOrTrigger
+smap <C-J> <Plug>snipMateNextOrTrigger
 
 let g:goldenview__enable_default_mapping = 0
 " 1. split to tiled windows
-nmap <silent> <C-L>  <Plug>GoldenViewSplit
+nmap <silent> <Leader>2   <Plug>GoldenViewSplit
+vmap <silent> <Leader>2   <Plug>GoldenViewSplit
 
 " 2. quickly switch current window with the main pane
 " and toggle back
-nmap <silent> <F8>   <Plug>GoldenViewSwitchMain
-nmap <silent> <S-F8> <Plug>GoldenViewSwitchToggle
+nmap <silent> <Leader>1   :on!<CR>
+vmap <silent> <Leader>1   :on!<CR>
 
 " 3. jump to next and previous window
-nmap <silent> <C-N>  <Plug>GoldenViewNext
-nmap <silent> <C-M>  <Plug>GoldenViewPrevious
-:vsp
-
-"Ctrlp rebindding to Ctrl-p
-let g:ctrlp_map = '<C-p>'
-" The Silver Searcher
-if executable('ag')
-"Use ag over grep
-set grepprg=ag\ --nogroup\ --nocolor
-
-" Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-      \ --ignore .git
-      \ --ignore .svn
-      \ --ignore .hg
-      \ --ignore .settings
-      \ --ignore .project
-      \ --ignore .cproject
-      \ --ignore .DS_Store
-      \ --ignore "**/*.pyc"
-      \ --ignore "**/*.exe"
-      \ --ignore "**/*.pdf"
-      \ --ignore "**/*.so"
-      \ --ignore "**/*.png"
-      \ --ignore "**/*.jpeg"
-      \ --ignore "**/*.dll"
-      \ --ignore "**/*.lib"
-      \ --ignore "**/*.o"
-      \ --ignore "**/*.a"
-      \ --ignore "**/*.dex"
-        \ --ignore "**/*.class"
-        \ --ignore "**/*.bin"
-        \ --ignore "**/*.db"
-        \ --ignore "**/*.bmp"
-        \ --ignore "**/*.apk"
-        \ --ignore "**/*.zip"
-        \ --ignore "**/*.tar"
-        \ --ignore "**/*.tar.bz"
-        \ --ignore "**/*.tar.bz2"
-        \ --ignore "**/*.tar.gz"
-        \ --ignore "**/*.tar.xz"
-        \ --ignore "**/*.tar.lzma"
-        \ --ignore "**/*.rar"
-        \ --ignore "**/*.db"
-        \ --ignore "**/*.d"
-        \ -g ""'
-else 
-  "Fallback options when The Silver Searcher is not available
-  let g:ctrlp_cmd = 'CtrlP'
-  map <C-S-p> :CtrlPMixed<CR>
-  let g:ctrlp_max_files=0
-  "let g:ctrlp_max_depth=32
-  " Ignore some folders and binary files
-  let g:ctrlp_custom_ignore = {
-        \ 'dir':  '\v[\/]\.(git|hg|svn|metadata|build*)$',
-        \ 'file': '\v\.(exe|so|dll|bin|o|a|png|jpeg|jpg|pdf|class)$',
-        \ }
-endif
-
-let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-" Clang complete 
-let g:clang_library_path = expand('$HOME/.vim/bundle/YouCompleteMe/third_party/ycmd')
-let g:clang_use_library=1
-let g:clang_user_options = "-std=c++03"
-"nnoremap <Leader>q :call g:ClangUpdateQuickFix()<CR>
-
-"YCM
-map <Leader>i :YcmCompleter GoToDefinition<CR>
-
-"Unite gtags
-nnoremap [unite] <Nop>
-nmap <space> [unite]
-let g:unite_source_gtags_project_config = {
-      \ '_': { 'treelize': 1 }
-      \ }
-map [unite]gg :execute 'Unite gtags/def:'.expand('<cword>')<CR>
-map [unite]gt :execute 'Unite gtags/completion'<CR>
-map [unite]gc :execute 'Unite gtags/context'<CR>
-map [unite]gr :execute 'Unite gtags/ref'<CR>
-map [unite]ge :execute 'Unite gtags/grep'<CR>
-map [unite]gg <ESC>:execute 'Unite gtags/def:'.GetVisualSelection()<CR>
-
-" Unite mapping
-let g:unite_source_history_yank_enable = 1
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-"map <C-p> :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
-map [unite]p :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
-map [unite]f :<C-u>Unite -no-split -buffer-name=files   -start-insert file<cr>
-map [unite]r :<C-u>Unite -no-split -buffer-name=mru     -start-insert file_mru<cr>
-map [unite]o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
-map [unite]y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
-map [unite]e :<C-u>Unite -no-split -buffer-name=buffer  buffer<cr>
-
-" Custom mappings for the unite buffer
-autocmd FileType unite call s:unite_settings()
-function! s:unite_settings()
-  " Play nice with supertab
-  let b:SuperTabDisabled=1
-  " Enable navigation with control-j and control-k in insert mode
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-  imap <buffer> <C-q>   <Plug>(unite_exit)
-  vmap <buffer> <C-q>   <Plug>(unite_exit)
-endfunction
+nmap <silent> <Leader>n  <Plug>GoldenViewNext
+nmap <silent> <Leader>m  <Plug>GoldenViewNext
 
 "Source edition
-map <leader>ev :e ~/.vimrc<CR>
-map <leader>sv :so ~/.vimrc<CR>
+nnoremap <leader>ev :e ~/.vimrc<CR>
+nnoremap <leader>sv :so ~/.vimrc<CR>
 
 " Complete options (disable preview scratch window, longest removed to always
 " show menu)
 set completeopt=menu,menuone
 " Limit popup menu height
-set pumheight=16
+set pumheight=10
 
 "------------------------------------------------------------
 " GUI options
 set guioptions=
-" Console will inherit vim's title
-set title
 
 "Correct Bash syntax for all bash files
 au BufNewFile,BufRead .bashrc*,.bash_exports,.bash_aliases,.bash_functions,.bash_exports,.bash_wine,bashrc,bash.bashrc,.bash_profile*,.bash_logout*,*.bash,*.ebuild call SetFileTypeSH("bash")
@@ -375,6 +284,3 @@ au BufNewFile,BufRead .vimrc,.vimperatorrc set filetype=vim
 
 "Vim 7.3 detects example.pc as filetype 'proc' but has no syntax highlighting for Pro C. Override it so that it highlights as C. 
 au BufRead,BufNewFile *.pc set filetype=c
-
-"Checks if current plugins are up-to-date
-NeoBundleCheck
