@@ -19,13 +19,15 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'rhysd/vim-clang-format'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter' 
+Plug 'Valloric/YouCompleteMe'
 "'ggreer/the_silver_searcher' for checking instructions on how to install ag
 Plug 'Raimondi/delimitMate'
-Plug 'zhaocai/GoldenView.vim'
-  Plug 'marijnh/tern_for_vim'
- Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
- Plug 'junegunn/fzf.vim'
- Plug 'dbakker/vim-projectroot'
+Plug 'marijnh/tern_for_vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'dbakker/vim-projectroot'
+Plug 'jalvesaq/Nvim-R'
+Plug 'slashmili/alchemist.vim'
 
 call plug#end()
 
@@ -173,21 +175,15 @@ map <C-W> :bdelete<CR>
 "Alternates .h to or from .cpp/.c
 map <silent> <C-Tab> :A<CR>
 
-" CTRL-X and SHIFT-Del are Cut
-vnoremap <C-X> "+x
-vnoremap <S-Del> "+x
+" Leader v will paste from clipboard
+"
+map <Leader>v :read !xclip -o<CR>
+vmap <Leader>v :read !xclip -o<CR>
+map <Leader>v :read !xclip -o<CR>
 
-" CTRL-C and CTRL-Insert are Copy
-vnoremap <C-C> "+y
-vnoremap <C-Insert> "+y
-
-" CTRL-V and SHIFT-Insert are Paste
-vmap <C-V> "+gP
-vmap <S-Insert>  	"+gP
-nmap <C-V> "+gP
-nmap <S-Insert>  	"+gP
-cmap <C-V>  	<C-R>*
-cmap <S-Insert> 	<C-R>*
+" Leader c will copy to the clipboard
+map <Leader>c :w !xclip<CR><CR>
+"vmap <F7> "*y
 
 "Mapping set paste / set nopaste
 nnoremap <silent> <Leader>sp :set paste<CR>
@@ -247,20 +243,6 @@ nnoremap <leader>dp :ProjectRootCD<cr>
 "Snip mate triggerring mapped to <C-J> instead of <Tab>
 imap <C-J> <Plug>snipMateNextOrTrigger
 smap <C-J> <Plug>snipMateNextOrTrigger
-
-let g:goldenview__enable_default_mapping = 0
-" 1. split to tiled windows
-nmap <silent> <Leader>2   <Plug>GoldenViewSplit
-vmap <silent> <Leader>2   <Plug>GoldenViewSplit
-
-" 2. quickly switch current window with the main pane
-" and toggle back
-nmap <silent> <Leader>1   :on!<CR>
-vmap <silent> <Leader>1   :on!<CR>
-
-" 3. jump to next and previous window
-nmap <silent> <Leader>n  <Plug>GoldenViewNext
-nmap <silent> <Leader>m  <Plug>GoldenViewNext
 
 "Source edition
 nnoremap <leader>ev :e ~/.vimrc<CR>
