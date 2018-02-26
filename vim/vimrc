@@ -27,6 +27,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'dbakker/vim-projectroot'
 Plug 'jalvesaq/Nvim-R'
+Plug 'elixir-editors/vim-elixir'
 Plug 'slashmili/alchemist.vim'
 
 call plug#end()
@@ -235,10 +236,10 @@ nnoremap <expr> <Leader>ep ':edit '.projectroot#guess().'/'
 nnoremap <leader>dp :ProjectRootCD<cr>
 
 " Clang complete 
-" let g:clang_library_path = '/Users/afb/.vim/bundle/YouCompleteMe/third_party/ycmd'
-" let g:clang_use_library=1
-" let g:clang_user_options = "-std=c++11"
-"nnoremap <Leader>q :call g:ClangUpdateQuickFix()<CR>
+let g:clang_library_path = '~/.vim/plugged/YouCompleteMe/third_party/ycmd'
+let g:clang_use_library=1
+let g:clang_user_options = "-std=c++17"
+map <Leader>q :YcmCompleter FixIt<CR>
 
 "Snip mate triggerring mapped to <C-J> instead of <Tab>
 imap <C-J> <Plug>snipMateNextOrTrigger
