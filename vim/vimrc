@@ -9,18 +9,23 @@ if has('vim_starting')
   set nocompatible               " Be iMproved
 endif
 
+"Fixes a problem where the fzf window does not closes with escape
+if has("nvim")
+  au TermOpen * tnoremap <Esc> <c-\><c-n>
+  au FileType fzf tunmap <Esc>
+endif
+
 "Required
 call plug#begin(expand('~/.vim/plugged'))
 
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/seoul256.vim'
 Plug 'Lokaltog/vim-easymotion'
-" non-GitHub repos
 Plug 'rhysd/vim-clang-format'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter' 
-Plug 'Valloric/YouCompleteMe'
-"'ggreer/the_silver_searcher' for checking instructions on how to install ag
+Plug 'scrooloose/nerdtree'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 Plug 'Raimondi/delimitMate'
 Plug 'marijnh/tern_for_vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -29,6 +34,14 @@ Plug 'dbakker/vim-projectroot'
 Plug 'jalvesaq/Nvim-R'
 Plug 'elixir-editors/vim-elixir'
 Plug 'slashmili/alchemist.vim'
+Plug 'fatih/vim-go'
+Plug 'davidhalter/jedi-vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-syntastic/syntastic'
+Plug 'diepm/vim-rest-console'
+Plug 'bfredl/nvim-ipy'
+Plug 'lervag/vimtex'
 
 call plug#end()
 
@@ -149,8 +162,8 @@ set ttimeoutlen=20           " keycode timeout 20ms
 
 " Useful mappings
 
-"Maps the leader command for general usage. This one is useful for it is close
 "to h, j, k, l
+"Maps the leader command for general usage. This one is useful for it is close
 let mapleader = ';'
 
 "NERDCommenter - Mapping C-t to comment in visual and normal modes. 
@@ -170,8 +183,10 @@ nnoremap <C-L> :nohl<CR><C-L>
 map <C-S> :w<CR>
 map <Leader>w :w<CR>
 
-" Maps Ctrl+W to close buffer
-map <C-W> :bdelete<CR>
+" Maps Leader+q to close buffer
+map <Leader>q :bdelete<CR>
+map <Leader>q :bdelete!<CR>
+map <Leader>qq :q!<CR>
 
 "Alternates .h to or from .cpp/.c
 map <silent> <C-Tab> :A<CR>
@@ -184,14 +199,13 @@ map <Leader>v :read !xclip -o<CR>
 
 " Leader c will copy to the clipboard
 map <Leader>c :w !xclip<CR><CR>
-"vmap <F7> "*y
 
 "Mapping set paste / set nopaste
 nnoremap <silent> <Leader>sp :set paste<CR>
 nnoremap <silent> <Leader>snp :set nopaste<CR>
 
 " Use CTRL-Q to do what CTRL-V used to do
-noremap <C-Q>   	<C-V>
+noremap <C-Q> <C-V>
 
 " Escape is light years away!
 imap jk <Esc>
@@ -209,16 +223,22 @@ let g:EasyMotion_smartcase = 1
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
+" Moves lines with C-k and C-j
+:nnoremap <C-k> <Up>ddp<Up>
+:nnoremap <C-j> ddp
+
 " Ctrl+i for clang-format indentation 
 autocmd FileType c,cpp,objc nnoremap <buffer><C-h> :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><C-h> :ClangFormat<CR>
+nnoremap <leader><leader>f :ClangFormat<CR>
 
 "Fzf searcher
 nnoremap <silent> <Leader>p    :ProjectRootExe Files<CR>
 nnoremap <silent> <C-P>        :ProjectRootExe Files<CR>
 nnoremap <silent> <leader>h    :ProjectRootExe History<CR>
+let g:fzf_prefer_tmux = 1
 
-"vim-projectroot automatic definition on buffer opening
+" vim-projectroot automatic definition on buffer opening
 function! <SID>AutoProjectRootCD()
   try
     if &ft != 'help'
@@ -228,7 +248,9 @@ function! <SID>AutoProjectRootCD()
     " Silently ignore invalid buffers
   endtry
 endfunction
-"autocmd BufEnter * call <SID>AutoProjectRootCD()
+
+" Automatically enters the project root when opening a new buffer
+autocmd BufEnter * call <SID>AutoProjectRootCD()
 
 " :e PathToProject
 nnoremap <expr> <Leader>ep ':edit '.projectroot#guess().'/'
@@ -238,16 +260,34 @@ nnoremap <leader>dp :ProjectRootCD<cr>
 " Clang complete 
 let g:clang_library_path = '~/.vim/plugged/YouCompleteMe/third_party/ycmd'
 let g:clang_use_library=1
-let g:clang_user_options = "-std=c++17"
-map <Leader>q :YcmCompleter FixIt<CR>
+map <Leader>i :YcmCompleter FixIt<CR>
+imap <C-Space> :YcmCompleter FixIt<CR>
+let g:ycm_cache_omnifunc = 1
+let g:ycm_semantic_triggers = { 'd': ['.', 're![a-zA-Z]'] }
 
 "Snip mate triggerring mapped to <C-J> instead of <Tab>
-imap <C-J> <Plug>snipMateNextOrTrigger
-smap <C-J> <Plug>snipMateNextOrTrigger
+imap <leader><m> <Plug>snipMateNextOrTrigger
+smap <leader><m> <Plug>snipMateNextOrTrigger
 
 "Source edition
 nnoremap <leader>ev :e ~/.vimrc<CR>
 nnoremap <leader>sv :so ~/.vimrc<CR>
+
+"ipynb
+autocmd Filetype ipynb nmap <silent><Leader>pp :VimpyterInsertPythonBlock<CR>
+autocmd Filetype ipynb nmap <silent><Leader>jj :VimpyterStartJupyter<CR>
+autocmd Filetype ipynb nmap <silent><Leader>nn :VimpyterStartNteract<CR>
+
+"Nvim-R configuration
+let R_in_buffer = 1
+let R_tmux_split = 1
+
+"Terminal mode
+
+" Esc to leave terminal mode it
+:tnoremap <Esc> <C-\><C-n>
+:tnoremap jk <C-\><C-n>
+:tnoremap JK  <C-\><C-n>
 
 " Complete options (disable preview scratch window, longest removed to always
 " show menu)
@@ -260,10 +300,24 @@ set pumheight=10
 set guioptions=
 
 "Correct Bash syntax for all bash files
-au BufNewFile,BufRead .bashrc*,.bash_exports,.bash_aliases,.bash_functions,.bash_exports,.bash_wine,bashrc,bash.bashrc,.bash_profile*,.bash_logout*,*.bash,*.ebuild call SetFileTypeSH("bash")
+"au BufNewFile,BufRead .bashrc*,.bash_exports,.bash_aliases,.bash_functions,.bash_exports,.bash_wine,bashrc,bash.bashrc,.bash_profile*,.bash_logout*,*.bash,*.ebuild call SetFileTypeSH("sh")
 
 "Correct vim highlight for different files
 au BufNewFile,BufRead .vimrc,.vimperatorrc set filetype=vim
 
 "Vim 7.3 detects example.pc as filetype 'proc' but has no syntax highlighting for Pro C. Override it so that it highlights as C. 
 au BufRead,BufNewFile *.pc set filetype=c
+
+" Splits Configuration
+set splitbelow
+set splitright
+:hi VertSplit ctermbg=None ctermfg=None gui=None cterm=None guifg=None guibg=None
+
+nnoremap <leader><leader>v :vsplit<CR>
+nnoremap <leader><leader>h :split<CR>
+
+" Nerd tree toggle
+map <leader>n :NERDTreeToggle<CR>
+
+" Syntastic checkers
+let g:syntastic_python_checkers = ['pylint']
