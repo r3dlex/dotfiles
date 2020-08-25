@@ -11,8 +11,7 @@ endif
 
 "Fixes a problem where the fzf window does not closes with escape
 if has("nvim")
-  au TermOpen * tnoremap <Esc> <c-\><c-n>
-  au FileType fzf tunmap <Esc>
+  autocmd! FileType fzf tnoremap <buffer> <esc> <c-c>
 endif
 
 "Required
@@ -25,35 +24,47 @@ Plug 'rhysd/vim-clang-format'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter' 
 Plug 'scrooloose/nerdtree'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --java-completer' }
 Plug 'Raimondi/delimitMate'
 Plug 'marijnh/tern_for_vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'dbakker/vim-projectroot'
 Plug 'jalvesaq/Nvim-R'
 Plug 'elixir-editors/vim-elixir'
 Plug 'slashmili/alchemist.vim'
 Plug 'fatih/vim-go'
-Plug 'davidhalter/jedi-vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-syntastic/syntastic'
 Plug 'diepm/vim-rest-console'
 Plug 'bfredl/nvim-ipy'
 Plug 'lervag/vimtex'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+" Gives the ability to process latex in markdown
+" Depends on nodejs and yarn
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
+Plug 'junegunn/vim-easy-align'
+" Plug
+"
+Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' }
+Plug 'PProvost/vim-ps1'
 
 call plug#end()
 
 "Sets font size
 if has("gui_running")
-  if has("gui_gtk2")
-    set guifont=Inconsolata\ 12
-  elseif has("gui_macvim")
-    set guifont=Menlo\ Regular:h14
-  elseif has("gui_win32")
-    set guifont=Consolas:h11:cANSI
-  endif
+  "if has("gui_gtk2")
+    "set guifont=Inconsolata\ 12
+  "elseif has("gui_macvim")
+    "set guifont=Menlo\ Regular:h14
+  "elseif has("gui_win32")
+    "set guifont=Consolas:h11:cANSI
+  "endif
+
+  "Maximized
+  set lines 999 columns 999
 endif
 
 "Required by neobundle
@@ -116,6 +127,9 @@ set nobackup
 set nowb
 set noswapfile
 
+" Only stores buffers when making session
+set sessionoptions=buffers
+
 if has('mouse')
     set mouse=a
 endif
@@ -143,7 +157,7 @@ let g:clang_format#style_options = {
   \ "AllowShortFunctionsOnASingleLine" : "false",
   \ "AccessModifierOffset" : -1,
   \ "AlwaysBreakTemplateDeclarations" : "true",
-  \ "Standard" : "C++03"}
+  \ "Standard" : "C++11"}
 "clang-format call
 let g:clang_format#command = "clang-format"
 
@@ -191,14 +205,13 @@ map <Leader>qq :q!<CR>
 "Alternates .h to or from .cpp/.c
 map <silent> <C-Tab> :A<CR>
 
+" Clipboard copy and paste functions
+" Leader c will copy and x will cut to the clipboard
+vmap <Leader>c "+y
+vmap <Leader>x "+c
 " Leader v will paste from clipboard
-"
-map <Leader>v :read !xclip -o<CR>
-vmap <Leader>v :read !xclip -o<CR>
-map <Leader>v :read !xclip -o<CR>
-
-" Leader c will copy to the clipboard
-map <Leader>c :w !xclip<CR><CR>
+noremap <Leader>v c<ESC>"+p
+imap <Leader>v <ESC>"+pa
 
 "Mapping set paste / set nopaste
 nnoremap <silent> <Leader>sp :set paste<CR>
@@ -234,9 +247,19 @@ nnoremap <leader><leader>f :ClangFormat<CR>
 
 "Fzf searcher
 nnoremap <silent> <Leader>p    :ProjectRootExe Files<CR>
+" Only Git Files
+nnoremap <silent> <Leader>b   :ProjectRootExe Buffers<CR>
+nnoremap <silent> <Leader>g   :ProjectRootExe GFiles<CR>
+nnoremap <silent> <Leader>l   :ProjectRootExe Lines<CR>
+nnoremap <silent> <Leader>m   :ProjectRootExe Commits<CR>
 nnoremap <silent> <C-P>        :ProjectRootExe Files<CR>
 nnoremap <silent> <leader>h    :ProjectRootExe History<CR>
+
+" [Tags] Command to generate tags file
+let g:fzf_tags_command = 'ctags -R'
+
 let g:fzf_prefer_tmux = 1
+let g:fzf_buffers_jump = 1
 
 " vim-projectroot automatic definition on buffer opening
 function! <SID>AutoProjectRootCD()
@@ -257,21 +280,28 @@ nnoremap <expr> <Leader>ep ':edit '.projectroot#guess().'/'
 " Update project root 
 nnoremap <leader>dp :ProjectRootCD<cr>
 
-" Clang complete 
+" YouCompleteMe / Clang complete 
 let g:clang_library_path = '~/.vim/plugged/YouCompleteMe/third_party/ycmd'
 let g:clang_use_library=1
+
 map <Leader>i :YcmCompleter FixIt<CR>
 imap <C-Space> :YcmCompleter FixIt<CR>
+nnoremap <C-Space> :YcmCompleter FixIt<CR>
+
 let g:ycm_cache_omnifunc = 1
 let g:ycm_semantic_triggers = { 'd': ['.', 're![a-zA-Z]'] }
+let g:ycm_autoclose_preview_window_after_completion=1
 
 "Snip mate triggerring mapped to <C-J> instead of <Tab>
 imap <leader><m> <Plug>snipMateNextOrTrigger
 smap <leader><m> <Plug>snipMateNextOrTrigger
 
 "Source edition
-nnoremap <leader>ev :e ~/.vimrc<CR>
-nnoremap <leader>sv :so ~/.vimrc<CR>
+"nnoremap <leader>ev :e ~/.vimrc<CR>
+"nnoremap <leader>sv :so ~/.vimrc<CR>
+nnoremap <leader>ev :e ~/AppData/Local/nvim/init.vim<CR>
+nnoremap <leader>sv :so ~/AppData/Local/nvim/init.vim<CR>
+
 
 "ipynb
 autocmd Filetype ipynb nmap <silent><Leader>pp :VimpyterInsertPythonBlock<CR>
@@ -297,10 +327,15 @@ set pumheight=10
 
 "------------------------------------------------------------
 " GUI options
-set guioptions=
+set guioptions+=!a
+set clipboard=unnamedplus
+
+"Folding options
+nnoremap <leader>zi :setlocal foldmethod=indent<CR>
+nnoremap <leader>zs :setlocal foldmethod=syntax<CR>
 
 "Correct Bash syntax for all bash files
-"au BufNewFile,BufRead .bashrc*,.bash_exports,.bash_aliases,.bash_functions,.bash_exports,.bash_wine,bashrc,bash.bashrc,.bash_profile*,.bash_logout*,*.bash,*.ebuild call SetFileTypeSH("sh")
+au BufNewFile,BufRead .profile,.bash*,*.bash,*.ebuild call SetFileTypeSH("sh")
 
 "Correct vim highlight for different files
 au BufNewFile,BufRead .vimrc,.vimperatorrc set filetype=vim
@@ -313,11 +348,88 @@ set splitbelow
 set splitright
 :hi VertSplit ctermbg=None ctermfg=None gui=None cterm=None guifg=None guibg=None
 
+" PS1 related configs
+" Fixes PS1 indentation issues 
+au BufRead,BufNewFile *.ps1 setlocal  cindent cinoptions& cinoptions+=+0 cinkeys-=0#
+
 nnoremap <leader><leader>v :vsplit<CR>
 nnoremap <leader><leader>h :split<CR>
 
 " Nerd tree toggle
 map <leader>n :NERDTreeToggle<CR>
 
+" <F1> restores that 'shutdown session'
+noremap <F1> :source ~/.vim/shutdown_session.vim<CR>
+" manually save a session with <F2>
+noremap <F2> :mksession! ~/.vim/manual_session.vim<cr>
+" recall the manually saved session with <F3>
+noremap <F3> :source ~/.vim/manual_session.vim<cr>
+
 " Syntastic checkers
 let g:syntastic_python_checkers = ['pylint']
+
+" Python json.tool
+noremap <leader>pj :%!python -m json.tool<cr>
+
+"autocmd BufWritePre *.py 0,$!yapf
+au BufNewFile,BufRead .bashrc*,bashrc,bash.bashrc,.bash_profile*,.bash_logout*,*.bash,*.ebuild call SetFileTypeSH("bash")
+
+" Python add Bosch guard
+function! BoschGuardInsert(maintainer_name, filename_with_extension)
+  let l:template = "# =============================================================================\n
+        \#  C O P Y R I G H T\n
+        \# -----------------------------------------------------------------------------\n
+        \#  Copyright (c) 2020 by Robert Bosch GmbH. All rights reserved.\n
+        \#\n
+        \#  This file is property of Robert Bosch GmbH. Any unauthorized copy, use or\n
+        \#  distribution is an offensive act against international law and may be\n
+        \#  prosecuted under federal law. Its content is company confidential.\n
+        \# =============================================================================\n
+        \# Filename: \tfilename_with_extension\n
+        \# Author(s): \tmaintainer_name\n
+        \# ----------------------------------------------------------------------------"
+
+  let l:template = substitute(l:template, "filename_with_extension", a:filename_with_extension, "")
+  let l:template = substitute(l:template, "maintainer_name", a:maintainer_name, "")
+
+  put =l:template
+endfunction
+
+function! AddBoschGuard()
+  let maintainer_name = "Andre Silva (CC-AD/ESW4)"
+  let filename = expand("%:t")
+  call BoschGuardInsert(maintainer_name, filename)
+endfunction
+
+noremap <leader>hg :call AddBoschGuard()<cr>
+
+" Sets the title of the GUI to the cwd
+set title
+
+augroup dirchange
+    autocmd!
+    autocmd DirChanged * let &titlestring=v:event['cwd']
+augroup END
+
+" Fonts adjustments
+let s:fontsize = 13
+function! AdjustFontSize(amount)
+  let s:fontsize = s:fontsize+a:amount
+  :execute "GuiFont! Consolas:h" . s:fontsize
+endfunction
+
+noremap <C-ScrollWheelUp> :call AdjustFontSize(1)<CR>
+noremap <C-ScrollWheelDown> :call AdjustFontSize(-1)<CR>
+inoremap <C-ScrollWheelUp> <Esc>:call AdjustFontSize(1)<CR>a
+inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
+noremap <kPlus> :call AdjustFontSize(1)<CR>
+noremap <kMinus> :call AdjustFontSize(-1)<CR>
+" In insert mode, pressing ctrl + numpad's+ increases the font
+inoremap <C-kPlus> <Esc>:call AdjustFontSize(1)<CR>a
+inoremap <C-kMinus> <Esc>:call AdjustFontSize(-1)<CR>a
+
+" Align GitHub-flavored Markdown tables
+au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
+
+" Automatically save the current session whenever vim is closed
+autocmd VimLeave * mksession! ~/.vim/shutdown_session.vim
