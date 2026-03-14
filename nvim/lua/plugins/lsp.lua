@@ -175,6 +175,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
+    main = "nvim-treesitter",
     opts = {
       ensure_installed = {
         "bash", "c", "cpp", "css", "dockerfile", "go", "html",
@@ -194,8 +195,5 @@ return {
         },
       },
     },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
-    end,
   },
 }
