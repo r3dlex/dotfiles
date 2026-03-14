@@ -1,12 +1,8 @@
 # User defined environment variables
-# NOTE: Sensitive tokens belong in ~/.bash_exports_hidden (not tracked by git)
+# NOTE: Sensitive tokens belong in ~/.zsh_exports_hidden (not tracked by git)
 
 export EDITOR="nvim"
 export VISUAL="nvim"
-
-# History
-export HISTSIZE=50000
-export HISTFILESIZE=100000
 
 # Colors
 export CLICOLOR=1
@@ -28,7 +24,14 @@ export XDG_DATA_HOME="${HOME}/.local/share"
 export XDG_CACHE_HOME="${HOME}/.cache"
 
 # Path
-export PATH="${HOME}/.local/bin:${HOME}/bin:/usr/local/bin:/usr/local/sbin:${PATH}"
+typeset -U path
+path=(
+  "${HOME}/.local/bin"
+  "${HOME}/bin"
+  "/usr/local/bin"
+  "/usr/local/sbin"
+  $path
+)
 
 # Homebrew (macOS)
 if [[ -d "/opt/homebrew" ]]; then
@@ -38,23 +41,21 @@ elif [[ -d "/usr/local/Homebrew" ]]; then
 fi
 
 # Go
-if command -v go &>/dev/null; then
+if (( $+commands[go] )); then
   export GOPATH="${HOME}/go"
-  export PATH="${GOPATH}/bin:${PATH}"
+  path=("${GOPATH}/bin" $path)
 fi
 
 # Rust
-if [[ -f "${HOME}/.cargo/env" ]]; then
-  source "${HOME}/.cargo/env"
-fi
+[[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
 
 # Node.js (nvm)
 export NVM_DIR="${HOME}/.nvm"
 [[ -s "${NVM_DIR}/nvm.sh" ]] && source "${NVM_DIR}/nvm.sh"
 
 # Python (pyenv)
-if command -v pyenv &>/dev/null; then
+if (( $+commands[pyenv] )); then
   export PYENV_ROOT="${HOME}/.pyenv"
-  export PATH="${PYENV_ROOT}/bin:${PATH}"
+  path=("${PYENV_ROOT}/bin" $path)
   eval "$(pyenv init -)"
 fi

@@ -2,7 +2,7 @@
 
 # General
 alias pmake="make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)"
-alias so="source \${HOME}/.bash_profile"
+alias so="source \${HOME}/.zshrc"
 alias cls="clear"
 alias ..="cd .."
 alias ...="cd ../.."
@@ -52,19 +52,18 @@ alias k="kubectl"
 alias myip="curl -s https://ifconfig.me"
 
 # macOS specific
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$OSTYPE" == darwin* ]]; then
   alias preview="open -a Preview"
   alias firefox="open -a Firefox"
   alias chrome="open -a 'Google Chrome'"
   alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-  # Use GNU coreutils if available
-  if command -v gls &>/dev/null; then
+  if (( $+commands[gls] )); then
     alias ls="gls --color=auto"
   fi
 fi
 
 # Linux specific
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+if [[ "$OSTYPE" == linux* ]]; then
   alias ls="ls --color=auto"
   alias open="xdg-open"
 fi
