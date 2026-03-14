@@ -1,0 +1,81 @@
+# ~/.zshrc: executed by zsh for interactive shells
+
+# ── History ──────────────────────────────────────────────
+HISTFILE="${HOME}/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=100000
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
+
+# ── Shell Options ────────────────────────────────────────
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+setopt CORRECT
+setopt EXTENDED_GLOB
+setopt NO_BEEP
+setopt INTERACTIVE_COMMENTS
+
+# ── Completion ───────────────────────────────────────────
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*:warnings' format '%F{red}-- no matches found --%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' rehash true
+
+# ── Key Bindings ─────────────────────────────────────────
+bindkey -v
+bindkey 'jk' vi-cmd-mode
+bindkey '^R' history-incremental-search-backward
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+
+# ── Prompt ───────────────────────────────────────────────
+# Colored prompt: [timestamp] user@host full/path
+# Green for user, red for root, blue for path
+autoload -Uz colors && colors
+setopt PROMPT_SUBST
+
+if [[ $EUID -eq 0 ]]; then
+  PROMPT='%F{white}[%*] %F{red}%n%F{white}@%F{yellow}%m %F{blue}%~%f
+%# '
+else
+  PROMPT='%F{white}[%*] %F{green}%n%F{white}@%F{yellow}%m %F{blue}%~%f
+%# '
+fi
+RPROMPT='%(?..%F{red}[%?]%f)'
+
+# ── Load Exports ─────────────────────────────────────────
+[[ -f "${HOME}/.zsh_exports" ]] && source "${HOME}/.zsh_exports"
+[[ -f "${HOME}/.zsh_exports_hidden" ]] && source "${HOME}/.zsh_exports_hidden"
+
+# ── Load Aliases ─────────────────────────────────────────
+[[ -f "${HOME}/.zsh_aliases" ]] && source "${HOME}/.zsh_aliases"
+
+# ── FZF Integration ──────────────────────────────────────
+[[ -f "${HOME}/.fzf.zsh" ]] && source "${HOME}/.fzf.zsh"
+
+# ── Zsh Plugins (if installed) ───────────────────────────
+# zsh-autosuggestions
+if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# zsh-syntax-highlighting (must be last)
+if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
