@@ -41,8 +41,10 @@ return {
     },
     opts = {
       provider = "claude",
-      claude = {
-        model = "claude-sonnet-4-20250514",
+      providers = {
+        claude = {
+          model = "claude-sonnet-4-20250514",
+        },
       },
       mappings = {
         ask = "<leader>aa",
