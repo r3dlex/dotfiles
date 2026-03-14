@@ -1,0 +1,61 @@
+# User defined environment variables
+# NOTE: Sensitive tokens belong in ~/.zsh_exports_hidden (not tracked by git)
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# Colors
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+
+# Neovim true color support
+export NVIM_TUI_ENABLE_TRUE_COLOR=1
+
+# FZF configuration
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_TMUX_HEIGHT="30%"
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# XDG directories
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_DATA_HOME="${HOME}/.local/share"
+export XDG_CACHE_HOME="${HOME}/.cache"
+
+# Path
+typeset -U path
+path=(
+  "${HOME}/.local/bin"
+  "${HOME}/bin"
+  "/usr/local/bin"
+  "/usr/local/sbin"
+  $path
+)
+
+# Homebrew (macOS)
+if [[ -d "/opt/homebrew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -d "/usr/local/Homebrew" ]]; then
+  eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+fi
+
+# Go
+if (( $+commands[go] )); then
+  export GOPATH="${HOME}/go"
+  path=("${GOPATH}/bin" $path)
+fi
+
+# Rust
+[[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
+
+# Node.js (nvm)
+export NVM_DIR="${HOME}/.nvm"
+[[ -s "${NVM_DIR}/nvm.sh" ]] && source "${NVM_DIR}/nvm.sh"
+
+# Python (pyenv)
+if (( $+commands[pyenv] )); then
+  export PYENV_ROOT="${HOME}/.pyenv"
+  path=("${PYENV_ROOT}/bin" $path)
+  eval "$(pyenv init -)"
+fi

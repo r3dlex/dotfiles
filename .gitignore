@@ -1,0 +1,19 @@
+# Sensitive files - never commit tokens or credentials
+*_exports_hidden
+*_secrets
+*.secret
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor swap/backup files
+*.swp
+*.swo
+*~
+*.bak
+
+# Neovim plugin data (managed by lazy.nvim)
+nvim/lazy-lock.json
